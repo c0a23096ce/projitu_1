@@ -1,0 +1,41 @@
+DB名:KouTube
+
+CREATE TABLE users (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  username VARCHAR(50) NOT NULL UNIQUE,
+  password VARCHAR(255) NOT NULL,
+  email VARCHAR(100) NOT NULL UNIQUE,
+  fname VARCHAR(50),
+  lname VARCHAR(50)
+);
+
+CREATE TABLE videos (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  title VARCHAR(100) NOT NULL,
+  description TEXT,
+  file_path VARCHAR(255) NOT NULL,
+  view_count INT DEFAULT 0,
+  upload_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+CREATE TABLE comments (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  video_id INT NOT NULL,
+  user_id INT NOT NULL,
+  content TEXT NOT NULL,
+  wrote_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (video_id) REFERENCES videos(id),
+  FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+CREATE TABLE likes (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  video_id INT NOT NULL,
+  user_id INT NOT NULL,
+  liked_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE (video_id, user_id),
+  FOREIGN KEY (video_id) REFERENCES videos(id),
+  FOREIGN KEY (user_id) REFERENCES users(id)
+);
