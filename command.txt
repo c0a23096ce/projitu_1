@@ -1,0 +1,12 @@
+/etc/apache2/conf-available/cgi-enabled.conf
+<Directory /var/www/html/project>
+    Options +ExecCGI +FollowSymLinks
+    AllowOverride All
+    AddHandler .cgi .pl
+    Require all granted
+</Directory>
+
+mkdir /var/www/html/project
+ln -s /home/ユーザー名/projects/projitu_1 /var/www/html
+
+sudo systemctl restart apache2
