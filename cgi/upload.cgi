@@ -54,7 +54,7 @@ if form.getvalue("delete"):
         db.close()
         message = "<p>動画を削除しました</p>"
     except Exception as e:
-        message = f"<p style='color:red'>削除エラー: {html.escape(str(e))}</p>"
+        message = f"<p style='color:red'>削除エラー: {str(e)}</p>"
 
 # 動画一覧取得
 video_list_html = ""
@@ -66,8 +66,8 @@ try:
     for vid, title, file_path in cursor.fetchall():
         video_list_html += f"""
         <div>
-            <video controls src="/project/projitu_1/videos/{html.escape(file_path)}" width="240"></video><br>
-            タイトル: {html.escape(title)}
+            <video controls src="/project/projitu_1/videos/{file_path}" width="240"></video><br>
+            タイトル: {title}
             <form method="post" action="upload.cgi" style="display:inline;">
                 <input type="hidden" name="delete" value="{vid}">
                 <input type="submit" value="削除">
@@ -77,7 +77,7 @@ try:
         """
     db.close()
 except Exception as e:
-    video_list_html = f"<p style='color:red'>一覧取得エラー: {html.escape(str(e))}</p>"
+    video_list_html = f"<p style='color:red'>一覧取得エラー: {str(e)}</p>"
 
 # HTML表示
 fileitem = form["video"] if "video" in form else None
@@ -106,10 +106,10 @@ else:
             db.commit()
             db.close()
 
-            message = f"<p>アップロード成功: {html.escape(title)}</p>"
-            extra = f"""<video controls src="/project/projitu_1/videos/{html.escape(filename)}" width="480"></video><br>
+            message = f"<p>アップロード成功: {title}</p>"
+            extra = f"""<video controls src="/project/projitu_1/videos/{filename}" width="480"></video><br>
                         <a href="upload.cgi">戻る</a>"""
             print(html_template.format(message=message, extra=video_list_html + extra))
         except Exception as e:
-            message = f"<p style='color:red'>エラー: {html.escape(str(e))}</p>"
+            message = f"<p style='color:red'>エラー: {str(e)}</p>"
             print(html_template.format(message=message, extra=""))

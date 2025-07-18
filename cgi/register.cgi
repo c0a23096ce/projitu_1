@@ -63,7 +63,7 @@ if username and password and email:
               """)
 
     except Exception as e:
-        message = f"エラーが発生しました: {html.escape(str(e))}"
+        message = f"エラーが発生しました: {str(e)}"
 
     print(html_template.format(message=message))
 

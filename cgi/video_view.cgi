@@ -18,7 +18,7 @@ def print_error(error_msg):
     <head><title>エラー</title></head>
     <body>
         <h1>エラーが発生しました</h1>
-        <pre>{html.escape(str(error_msg))}</pre>
+        <pre>{str(error_msg)}</pre>
         <a href='login.cgi'>ログインページへ</a>
     </body>
     </html>
@@ -109,7 +109,7 @@ try:
     <html>
     <head>
       <meta charset="UTF-8">
-      <title>{html.escape(video['title'])}</title>
+      <title>{video['title']}</title>
       <style>
         body {{
             font-family: sans-serif;
@@ -220,8 +220,8 @@ try:
       <a href="video_top.cgi">トップページへ</a> | <a href="upload.cgi">動画をアップロード</a> | <a href="logout.cgi">ログアウト</a>
     </div>
 
-    <h1>{html.escape(video['title'])}</h1>
-    <p>{html.escape(video['description'])}</p>
+    <h1>{video['title']}</h1>
+    <p>{video['description']}</p>
     <video controls>
       <source src="{video['file_path']}" type="video/mp4">
     </video>
@@ -252,7 +252,7 @@ try:
           <video muted>
             <source src="{r['file_path']}" type="video/mp4">
           </video>
-          <a href="video_view.cgi?video_id={r['id']}">{html.escape(r['title'])}</a>
+          <a href="video_view.cgi?video_id={r['id']}">{r['title']}</a>
         </div>
         """)
 
@@ -266,8 +266,8 @@ try:
     for c in comments:
         print(f"""
         <div class="comment-box">
-          <div class="comment-username">{html.escape(c['username'])}</div>
-          <div class="comment-content">{html.escape(c['content'])}</div>
+          <div class="comment-username">{c['username']}</div>
+          <div class="comment-content">{c['content']}</div>
         </div>
         """)
 

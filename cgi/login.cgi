@@ -95,7 +95,7 @@ if email and password:
             message = "ログイン失敗：メールアドレスまたはパスワードが違います。"
 
     except Exception as e:
-        message = f"エラーが発生しました: {html.escape(str(e))}"
+        message = f"エラーが発生しました: {str(e)}"
 
     print()
     print(html_template.format(message=message))

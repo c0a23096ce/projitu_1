@@ -18,7 +18,7 @@ def print_error(error_msg):
     <head><title>エラー</title></head>
     <body>
         <h1>エラーが発生しました</h1>
-        <pre>{html.escape(str(error_msg))}</pre>
+        <pre>{str(error_msg)}</pre>
         <a href='login.cgi'>ログインページへ</a>
     </body>
     </html>
@@ -123,7 +123,7 @@ try:
             <video muted>
               <source src="{v['file_path']}" type="video/mp4">
             </video>
-            <div class="title">{html.escape(v['title'])}</div>
+            <div class="title">{v['title']}</div>
           </a>
         </div>
         """)
