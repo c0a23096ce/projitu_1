@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import cgi, os, mysql.connector, http.cookies, time, html
+from utils import require_login, get_connection
 
 UPLOAD_DIR = "/var/www/html/project/projitu_1/videos"
 
@@ -27,38 +28,7 @@ html_template = '''
 '''
 
 # セッション確認
-cookie = http.cookies.SimpleCookie(os.environ.get("HTTP_COOKIE", ""))
-session_id = cookie["session_id"].value if "session_id" in cookie else None
-user_id = None
-
-try:
-    if session_id:
-        db = mysql.connector.connect(
-            host='localhost',
-            user='root',
-            password='passwordA1!',
-            database='KouTube'
-        )
-        cursor = db.cursor()
-        # SQLインジェクション脆弱性あり（意図的）
-        query = f"SELECT user_id FROM sessions WHERE session_id = '{session_id}'"
-        cursor.execute(query)
-        row = cursor.fetchone()
-        if row:
-            user_id = row[0]
-        db.close()
-except Exception as e:
-    print(html_template.format(message=f"<p style='color:red'>セッション確認エラー: {html.escape(str(e))}</p>", extra=""))
-    exit()
-
-if not user_id:
-    print("""
-    <script>
-        alert("ログインが必要です");
-        location.href='login.cgi';
-    </script>
-    """)
-    exit()
+user_id = require_login()
 
 form = cgi.FieldStorage()
 message = ""
@@ -68,12 +38,7 @@ extra = ""
 if form.getvalue("delete"):
     delete_id = form.getvalue("delete")
     try:
-        db = mysql.connector.connect(
-            host='localhost',
-            user='root',
-            password='passwordA1!',
-            database='KouTube'
-        )
+        db = get_connection()
         cursor = db.cursor()
         query = f"SELECT file_path FROM videos WHERE id='{delete_id}' AND user_id='{user_id}'"
         cursor.execute(query)
@@ -94,12 +59,7 @@ if form.getvalue("delete"):
 # 動画一覧取得
 video_list_html = ""
 try:
-    db = mysql.connector.connect(
-        host='localhost',
-        user='root',
-        password='passwordA1!',
-        database='KouTube'
-    )
+    db = get_connection()
     cursor = db.cursor()
     query = f"SELECT id, title, file_path FROM videos WHERE user_id='{user_id}'"
     cursor.execute(query)
@@ -137,12 +97,7 @@ else:
             with open(filepath, 'wb') as f:
                 f.write(fileitem.file.read())
 
-            db = mysql.connector.connect(
-                host='localhost',
-                user='root',
-                password='passwordA1!',
-                database='KouTube'
-            )
+            db = get_connection()
             
             cursor = db.cursor()
             # SQLインジェクション脆弱性あり（意図的）

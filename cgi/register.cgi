@@ -4,6 +4,7 @@ import cgi
 import mysql.connector
 import html
 import crypt
+from utils import get_connection
 
 print("Content-Type: text/html\n")
 
@@ -36,18 +37,9 @@ html_template = '''
 </html>
 '''
 
-try:
-    db = mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="passwordA1!",
-        database="KouTube"
-    )
-    cursor = db.cursor()
+db = get_connection()
+cursor = db.cursor()
     
-except:
-    print(html_template.format(message="データベース接続失敗"))
-    exit()
 
 if username and password and email:
     salt = crypt.mksalt(crypt.METHOD_SHA512)
