@@ -1,0 +1,7 @@
+INSERT INTO videos (user_id, title, description, file_path, view_count, upload_at) VALUES
+(1, 'テスト動画', 'これはテスト用の説明です', '/project/projitu_1/project/projitu_1/videos/test.mp4', 0, '2025-07-11 17:00:00'),
+(1, '飛行機の映像', '飛行機が飛んでるよ', '/project/projitu_1/videos/hikouki.mp4', 0, '2025-07-11 17:42:36'),
+(1, '海', '自然の風景', '/project/projitu_1/videos/umi.mp4', 0, '2025-07-11 17:43:32'),
+(1, '教会の荘厳な佇まい', '静けさと歴史を感じる古い教会の映像です。', '/project/projitu_1/videos/church.mp4', 0, '2025-07-18 14:10:36'),
+(1, '滝の迫力映像', '豪快に流れる滝と自然の音を収録。', '/project/projitu_1/videos/taki.mp4', 0, '2025-07-18 14:10:36'),
+(1, '自然の中のひととき', '森の中での癒やしのひとときをお届けします。', '/project/projitu_1/videos/nature.mp4', 0, '2025-07-18 14:10:36');
