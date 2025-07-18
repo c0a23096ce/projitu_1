@@ -1,0 +1,99 @@
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
+
+import mysql.connector
+from db_connect import get_connection
+
+print("Content-Type: text/html; charset=UTF-8")
+print()
+
+conn = get_connection()
+cursor = conn.cursor(dictionary=True)
+
+# すべての動画を取得（新しい順）
+cursor.execute("SELECT id, title, file_path FROM videos ORDER BY upload_at DESC")
+videos = cursor.fetchall()
+
+print("""
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>動画一覧（トップ）</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background-color: #f9f9f9;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+
+    .video-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .video-card {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      overflow: hidden;
+      transition: transform 0.2s;
+    }
+
+    .video-card:hover {
+      transform: scale(1.03);
+    }
+
+    video {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .title {
+      padding: 10px;
+      font-size: 16px;
+      text-align: center;
+      color: #222;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+  </style>
+</head>
+<body>
+  <h1>KouTube!</h1>
+  <div class="video-grid">
+""")
+
+# 動画ごとの表示ブロック
+for v in videos:
+    print(f"""
+    <div class="video-card">
+      <a href="video_view.cgi?video_id={v['id']}&user_id=1">
+        <video muted>
+          <source src="{v['file_path']}" type="video/mp4">
+        </video>
+        <div class="title">{v['title']}</div>
+      </a>
+    </div>
+    """)
+
+print("""
+  </div>
+</body>
+</html>
+""")
+
+cursor.close()
+conn.close()
