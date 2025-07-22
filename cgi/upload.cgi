@@ -47,7 +47,7 @@ if form.getvalue("delete"):
         row = cursor.fetchone()
         if row:
             video_file = row[0]
-            video_path = os.path.join(UPLOAD_DIR, video_file)
+            video_path = os.path.join("/var/www/html", video_file.lstrip("/"))
             if os.path.exists(video_path):
                 os.remove(video_path)
             query = f"DELETE FROM videos WHERE id='{delete_id}' AND user_id='{user_id}'"
@@ -68,7 +68,7 @@ try:
     for vid, title, file_path in cursor.fetchall():
         video_list_html += f"""
         <div>
-            <video controls src="/project/projitu_1/videos/{file_path}" width="240"></video><br>
+            <video controls src="{file_path}" width="240"></video><br>
             タイトル: {title}
             <form method="post" action="upload.cgi" style="display:inline;">
                 <input type="hidden" name="delete" value="{vid}">
