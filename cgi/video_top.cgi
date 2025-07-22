@@ -104,6 +104,45 @@ try:
           max-width: 1000px;
           margin: 0 auto 20px;
         }}
+
+        .search-form {{
+          text-align: center;
+          margin-bottom: 30px;
+          padding: 20px;
+          background: white;
+          border-radius: 8px;
+          max-width: 1000px;
+          margin: 0 auto 30px;
+        }}
+
+        .search-form h2 {{
+          color: #333;
+          margin-bottom: 15px;
+          font-size: 20px;
+        }}
+
+        .search-form input[type="text"] {{
+          padding: 10px;
+          font-size: 16px;
+          border: 2px solid #ddd;
+          border-radius: 5px;
+          width: 300px;
+          margin-right: 10px;
+        }}
+
+        .search-form input[type="submit"] {{
+          padding: 10px 20px;
+          font-size: 16px;
+          background-color: #007bff;
+          color: white;
+          border: none;
+          border-radius: 5px;
+          cursor: pointer;
+        }}
+
+        .search-form input[type="submit"]:hover {{
+          background-color: #0056b3;
+        }}
       </style>
     </head>
     <body>
@@ -112,6 +151,15 @@ try:
         <p>ユーザーID: {user_id} でログイン中</p>
         <a href="upload.cgi">動画をアップロード</a> | <a href="logout.cgi">ログアウト</a>
       </div>
+      
+      <div class="search-form">
+        <h2>動画検索</h2>
+        <form method="get" action="video_search.cgi">
+            <input type="text" name="title" placeholder="動画タイトルを入力">
+            <input type="submit" value="検索">
+        </form>
+      </div>
+      
       <div class="video-grid">
     """)
 
@@ -134,8 +182,8 @@ try:
     </html>
     """)
 
-    cursor.close()
-    conn.close()
-
 except Exception as e:
     print_error(f"予期しないエラー: {str(e)}\n{traceback.format_exc()}")
+
+finally:
+  conn.close()

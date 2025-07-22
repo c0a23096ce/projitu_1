@@ -41,7 +41,7 @@ db = get_connection()
 cursor = db.cursor()
     
 
-if username and password and email:
+if username and password and email and fname and lname:
     salt = crypt.mksalt(crypt.METHOD_SHA512)
     hashed_password = crypt.crypt(password, salt)
     try:
