@@ -54,20 +54,22 @@ try:
     </head>
     <body>
 
-    <header>
-      <a href="#" class="logo">
-        <div class="logo-icon">VT</div>
-        <div class="logo-text">VidTube Pro</div>
-      </a>
-      <div class="search-container">
-        <form class="search-form" method="get" action="video_search.cgi">
-          <input type="text" name="title" value="{current_title}" class="search-input" placeholder="動画、チャンネル、クリエイターを検索...">
-          <button type="submit" class="search-btn">🔍</button>
-        </form>
-        <button class="voice-search" onclick="startVoiceSearch()">🎤</button>
-      </div>
-      <div class="header-right">
-        <a href="upload.cgi">👤</a>
+    <header class="header">
+      <div class="header-content">
+        <a href="#" class="logo">
+          <div class="logo-icon">VT</div>
+          <div class="logo-text">KouTube</div>
+        </a>
+        <div class="search-container">
+          <form class="search-form" method="get" action="video_search.cgi">
+            <input type="text" name="title" value="{current_title}" class="search-input" placeholder="動画、チャンネル、クリエイターを検索...">
+            <button type="submit" class="search-btn">🔍</button>
+          </form>
+          <button class="voice-search" onclick="startVoiceSearch()">🎤</button>
+        </div>
+        <div class="header-right">
+          <a href="upload.cgi">管理👤</a>
+        </div>
       </div>
     </header>      
 
@@ -88,6 +90,7 @@ try:
     """)
 
     print("""
+    </div>
     <script src="../static/voice_search.js"></script>
     </body>
     </html>
