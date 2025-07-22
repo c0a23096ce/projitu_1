@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 import cgi, os, mysql.connector, http.cookies, time, html
 from utils import require_login, get_connection
+import uuid
 
 UPLOAD_DIR = "/var/www/html/project/projitu_1/videos"
+PUBLOIC_DIR = "/project/projitu_1/videos"
 
 print("Content-Type: text/html; charset=utf-8\n")
 
@@ -91,25 +93,32 @@ else:
         message = "<p style='color:red'>動画ファイルが未選択です</p>"
         print(html_template.format(message=message, extra=""))
     else:
-        filename = os.path.basename(fileitem.filename)
-        filepath = os.path.join(UPLOAD_DIR, filename)
-        try:
-            with open(filepath, 'wb') as f:
-                f.write(fileitem.file.read())
-
-            db = get_connection()
-            
-            cursor = db.cursor()
-            # SQLインジェクション脆弱性あり（意図的）
-            query = f"INSERT INTO videos (user_id, title, description, file_path) VALUES ('{user_id}', '{title}', '{description}', '{filename}')"
-            cursor.execute(query)
-            db.commit()
-            db.close()
-
-            message = f"<p>アップロード成功: {title}</p>"
-            extra = f"""<video controls src="/project/projitu_1/videos/{filename}" width="480"></video><br>
-                        <a href="upload.cgi">戻る</a>"""
-            print(html_template.format(message=message, extra=video_list_html + extra))
-        except Exception as e:
-            message = f"<p style='color:red'>エラー: {str(e)}</p>"
+        # ランダムなファイル名を生成
+        ext = os.path.splitext(fileitem.filename)[1].lower()
+        # 許可する拡張子
+        allowed_exts = ['.mp4', '.mov', '.avi', '.webm']
+        if ext not in allowed_exts:
+            message = "<p style='color:red'>許可されていないファイル形式です</p>"
             print(html_template.format(message=message, extra=""))
+        else:
+            safe_filename = f"{uuid.uuid4().hex}{ext}"
+            filepath = os.path.join(UPLOAD_DIR, safe_filename)
+            try:
+                with open(filepath, 'wb') as f:
+                    f.write(fileitem.file.read())
+                    
+                public_filepath = os.path.join(PUBLOIC_DIR, safe_filename)
+                db = get_connection()
+                cursor = db.cursor()
+                query = f"INSERT INTO videos (user_id, title, description, file_path) VALUES ('{user_id}', '{title}', '{description}', '{public_filepath}')"
+                cursor.execute(query)
+                db.commit()
+                db.close()
+
+                message = f"<p>アップロード成功: {title}</p>"
+                extra = f"""<video controls src="/project/projitu_1/videos/{safe_filename}" width="480"></video><br>
+                            <a href="upload.cgi">戻る</a>"""
+                print(html_template.format(message=message, extra=video_list_html + extra))
+            except Exception as e:
+                message = f"<p style='color:red'>エラー: {str(e)}</p>"
+                print(html_template.format(message=message, extra=""))
