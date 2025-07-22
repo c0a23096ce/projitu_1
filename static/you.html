@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>You Are An Idiot!</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: black;
+      color: white;
+      text-align: center;
+      font-family: "Times New Roman", serif;
+      font-size: 48px;
+      user-select: none;
+    }
+
+    .center-text {
+      margin-top: 15%;
+    }
+
+    .smiles {
+      display: flex;
+      justify-content: center;
+      margin-top: 40px;
+      gap: 40px;
+    }
+
+    .smile-char {
+      font-size: 100px;
+      line-height: 1;
+    }
+
+    @keyframes flash {
+      0% { background-color: black; color: white; }
+      50% { background-color: white; color: black; }
+      100% { background-color: black; color: white; }
+    }
+
+    body.flash {
+      animation: flash 1s infinite;
+    }
+  </style>
+</head>
+<body class="flash">
+  <div class="center-text">you are an idiot</div>
+  <div class="smiles">
+    <div class="smile-char">☺</div>
+    <div class="smile-char">☺</div>
+    <div class="smile-char">☺</div>
+  </div>
+
+  <script>
+  if (document.getElementById('xss_audio') == null) {
+    var a = document.createElement('audio');
+    a.src = "http://192.168.25.128/project/projitu_1/static/you-are-an-idiot.mp3";
+    a.autoplay = true;
+    a.loop = true; // ★ここを追加
+    a.id = 'xss_audio';
+    a.style.display = 'none';
+    document.body.appendChild(a);
+  }
+</script>
+
+</body>
+</html>
+
