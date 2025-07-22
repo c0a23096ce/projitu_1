@@ -38,7 +38,7 @@ sudo systemctl restart apache2
 ```
 
 ### 2. データベース設定
-MySQLでKouTubeデータベースを作成し、[MySQL.txt](MySQL.txt)に記載されているテーブル構造を実行してください。
+MySQLでKouTubeデータベースを作成し、[MySQL.txt](setups/MySQL.txt)に記載されているテーブル構造を実行してください。
 
 ### 3. 動画保存ディレクトリ
 ```bash
