@@ -80,6 +80,9 @@ projitu_1/
 - セッション管理のセキュリティ
 - 入力値検証の重要性
 
+### ハッキングデモ
+-ハッキングデモに使用する手順書は[manual.md](attacks/manual.md)を参照してください。
+
 ## アクセス方法
 ブラウザで以下のURLにアクセス：
 - テストページ: http://localhost/project/projitu_1/cgi/test.cgi
