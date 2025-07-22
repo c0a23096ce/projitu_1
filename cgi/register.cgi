@@ -21,21 +21,28 @@ html_template = '''
 <head>
     <meta charset="utf-8">
     <title>ユーザー登録</title>
+    <link rel="stylesheet" href="../static/register.css">
 </head>
 <body>
-    <h2>ユーザー登録</h2>
-    <form action="./register.cgi" method="post">
-        ユーザー名: <input type="text" name="username"><br>
-        パスワード: <input type="password" name="password"><br>
-        メールアドレス: <input type="email" name="email"><br>
-        名: <input type="text" name="fname"><br>
-        姓: <input type="text" name="lname"><br>
-        <input type="submit" value="登録">
-    </form>
-    <p>{message}</p>
+    <div class="auth-container">
+        <h2 class="auth-title">ユーザー登録</h2>
+        <p class="error-message">{message}</p>
+        <form action="./register.cgi" method="post">
+            <input type="text" name="username" placeholder="ユーザー名" class="auth-input" required><br>
+            <input type="password" name="password" placeholder="パスワード" class="auth-input" required><br>
+            <input type="email" name="email" placeholder="メールアドレス" class="auth-input" required><br>
+            <input type="text" name="fname" placeholder="名" class="auth-input"><br>
+            <input type="text" name="lname" placeholder="姓" class="auth-input"><br>
+            <button type="submit" class="auth-btn">登録する</button>
+        </form>
+        <div class="auth-toggle">
+            すでにアカウントをお持ちですか？ <a href="./login.cgi">ログイン</a>
+        </div>
+    </div>
 </body>
 </html>
 '''
+
 
 db = get_connection()
 cursor = db.cursor()
@@ -68,4 +75,4 @@ if username and password and email and fname and lname:
     print(html_template.format(message=message))
 
 else:
-    print(html_template.format(message="すべての必須項目を入力してください。"))
+    print(html_template.format(message=""))

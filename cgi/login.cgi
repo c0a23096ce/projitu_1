@@ -31,22 +31,29 @@ html_template = '''
 <head>
     <meta charset="utf-8">
     <title>ログインページ</title>
+    <link rel="stylesheet" href="../static/register.css">
 </head>
 <body>
-    <h2>ログイン</h2>
-    <form action="./login.cgi" method="post">
-        メールアドレス: <input type="text" name="email"><br>
-        パスワード: <input type="password" name="password"><br>
-        <input type="submit" value="ログイン">
-    </form>
-    <p><a href="./register.cgi">新規登録はこちら</a></p>
-    <p>{message}</p>
+    <div class="auth-container">
+        <h2 class="auth-title">ログイン</h2>
+        <p class="error-message">{message}</p>
+        <form action="./login.cgi" method="post">
+            <input type="email" name="email" placeholder="メールアドレス" class="auth-input" required><br>
+            <input type="password" name="password" placeholder="パスワード" class="auth-input" required><br>
+            <button type="submit" class="auth-btn">ログイン</button>
+        </form>
+        <div class="auth-toggle">
+            アカウントをお持ちでない方は <a href="./register.cgi">新規登録</a>
+        </div>
+    </div>
 </body>
 </html>
 '''
 
+
 # DB接続
 print("Content-Type: text/html; charset=utf-8")
+
 db = get_connection()
 cursor = db.cursor()
 
@@ -66,7 +73,11 @@ if email and password:
                 # セッションID発行
                 new_session_id = str(uuid.uuid4())
                 # SQLインジェクション脆弱性あり
-                query = f"INSERT INTO sessions (session_id, user_id, expires_at) VALUES ('{new_session_id}', '{user_data[0]}', '{EXPIRES_DATETIME}')"
+                query = (
+                    f"INSERT INTO sessions (session_id, user_id, expires_at) "
+                    f"VALUES ('{new_session_id}', '{user_data[0]}', '{EXPIRES_DATETIME}') "
+                    f"ON DUPLICATE KEY UPDATE session_id='{new_session_id}', expires_at='{EXPIRES_DATETIME}'"
+                )
                 # print(f"Executing query: {query}")  # デバッグ用
                 cursor.execute(query)
                 db.commit()
@@ -77,11 +88,10 @@ if email and password:
                 cookie_obj["session_id"]["expires"] = cookie_datetime
                 
                 print(cookie_obj.output())
+                print()
                 
                 # video_top.cgiへリダイレクト
-                print("""
-                    Content-Type: text/html; charset=utf-8\n
-                    
+                print("""                    
                     <script>
                     alert('ログイン成功しました。');
                     window.location.href = './video_top.cgi';
@@ -97,12 +107,10 @@ if email and password:
     except Exception as e:
         message = f"エラーが発生しました: {str(e)}"
 
-    print()
     print(html_template.format(message=message))
 
 else:
     # 初回アクセスや空入力
-    print()
-    print(html_template.format(message="メールアドレスとパスワードを入力してください。"))
+    print(html_template.format(message=""))
 
 db.close()

@@ -1,6 +1,7 @@
 import os
 import http.cookies
 import mysql.connector
+import datetime
 
 def check_login():
     """
@@ -8,6 +9,7 @@ def check_login():
     Returns:
         int: ログイン済みの場合はuser_id、未ログインの場合はNone
     """
+
     cookie = http.cookies.SimpleCookie(os.environ.get("HTTP_COOKIE", ""))
     session_id = cookie["session_id"].value if "session_id" in cookie else None
     
@@ -22,14 +24,18 @@ def check_login():
             database='KouTube'
         )
         cursor = db.cursor()
-        # SQLインジェクション脆弱性あり（意図的）
-        query = f"SELECT user_id FROM sessions WHERE session_id = '{session_id}'"
+        query = f"SELECT user_id, expires_at FROM sessions WHERE session_id = '{session_id}'"
         cursor.execute(query)
         row = cursor.fetchone()
         db.close()
         
         if row:
-            return row[0]
+            user_id, expires_at = row
+            now = datetime.datetime.now()
+            if isinstance(expires_at, str):
+                expires_at = datetime.datetime.strptime(expires_at, "%Y-%m-%d %H:%M:%S")
+            if expires_at > now:
+                return user_id
         return None
     except Exception:
         print("Content-Type: text/html; charset=utf-8\n")
