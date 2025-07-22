@@ -81,7 +81,7 @@ projitu_1/
 - 入力値検証の重要性
 
 ### ハッキングデモ
--ハッキングデモに使用する手順書は[manual.md](attacks/manual.md)を参照してください。
+- ハッキングデモに使用する手順書は[manual.md](attacks/manual.md)を参照してください。
 
 ## アクセス方法
 ブラウザで以下のURLにアクセス：
