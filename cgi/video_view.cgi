@@ -33,6 +33,7 @@ try:
 
     form = cgi.FieldStorage()
     video_id = form.getfirst("video_id", "1")
+    current_title = form.getfirst('title', '')
 
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
@@ -53,27 +54,56 @@ try:
         )
         conn.commit()
 
-    # 👍 いいね処理
+    # 👍 いいね処理（トグル式）
     if form.getfirst("like") == "1" and user_id:
-        try:
+        # 既にいいねしているか確認
+        cursor.execute(
+            "SELECT * FROM likes WHERE video_id = %s AND user_id = %s",
+            (video_id, user_id)
+        )
+        if cursor.fetchone():
+            # 既にいいねしていれば削除（取り消し）
+            cursor.execute(
+                "DELETE FROM likes WHERE video_id = %s AND user_id = %s",
+                (video_id, user_id)
+            )
+        else:
+            # いいねしていなければ追加
             cursor.execute(
                 "INSERT INTO likes (video_id, user_id) VALUES (%s, %s)",
                 (video_id, user_id)
             )
-            conn.commit()
-        except mysql.connector.errors.IntegrityError:
-            pass
+            # 低評価があれば消す
+            cursor.execute(
+                "DELETE FROM dislikes WHERE video_id = %s AND user_id = %s",
+                (video_id, user_id)
+            )
+        conn.commit()
 
-    # 👎 低評価処理
+    # 👎 低評価処理（トグル式）
     if form.getfirst("dislike") == "1" and user_id:
-        try:
+        cursor.execute(
+            "SELECT * FROM dislikes WHERE video_id = %s AND user_id = %s",
+            (video_id, user_id)
+        )
+        if cursor.fetchone():
+            # 既に低評価していれば削除（取り消し）
+            cursor.execute(
+                "DELETE FROM dislikes WHERE video_id = %s AND user_id = %s",
+                (video_id, user_id)
+            )
+        else:
+            # 低評価していなければ追加
             cursor.execute(
                 "INSERT INTO dislikes (video_id, user_id) VALUES (%s, %s)",
                 (video_id, user_id)
             )
-            conn.commit()
-        except mysql.connector.errors.IntegrityError:
-            pass
+            # いいねがあれば消す
+            cursor.execute(
+                "DELETE FROM likes WHERE video_id = %s AND user_id = %s",
+                (video_id, user_id)
+            )
+        conn.commit()
 
     # 👍 いいね数取得
     cursor.execute("SELECT COUNT(*) AS cnt FROM likes WHERE video_id = %s", (video_id,))
@@ -108,183 +138,121 @@ try:
     print(f"""
     <html>
     <head>
-      <meta charset="UTF-8">
-      <title>{video['title']}</title>
-      <style>
-        body {{
-            font-family: sans-serif;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            background: #f9f9f9;
-        }}
-        h1 {{
-            font-size: 24px;
-        }}
-        video {{
-            width: 100%;
-            margin-bottom: 20px;
-        }}
-        .user-info {{
-            text-align: center;
-            margin-bottom: 20px;
-            padding: 10px;
-            background: white;
-            border-radius: 8px;
-        }}
-        .like-form {{
-            margin-bottom: 30px;
-        }}
-        .like-form form {{
-            display: inline;
-        }}
-        .like-form input[type=submit] {{
-            margin-right: 10px;
-            padding: 6px 16px;
-            border: none;
-            border-radius: 4px;
-            background-color: #ddd;
-            cursor: pointer;
-        }}
-        .recommend-section {{
-            margin-bottom: 40px;
-        }}
-        .recommend-list {{
-            display: flex;
-            gap: 20px;
-            justify-content: space-between;
-        }}
-        .recommend-item {{
-            flex: 1 1 0;
-            max-width: 32%;
-            background: #fff;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            text-align: center;
-        }}
-        .recommend-item video {{
-            width: 100%;
-            height: auto;
-        }}
-        .recommend-item a {{
-            display: block;
-            margin-top: 8px;
-            font-weight: bold;
-            color: #333;
-            text-decoration: none;
-        }}
-        .comment-section {{
-            background: #fff;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 0 5px #ccc;
-        }}
-        .comment-box {{
-            border-bottom: 1px solid #ddd;
-            padding: 10px 0;
-        }}
-        .comment-username {{
-            font-weight: bold;
-        }}
-        .comment-content {{
-            white-space: pre-wrap;
-        }}
-        .comment-form {{
-            margin-top: 20px;
-        }}
-        textarea {{
-            width: 100%;
-            height: 80px;
-            resize: vertical;
-            font-size: 14px;
-        }}
-        input[type=submit].comment-btn {{
-            margin-top: 10px;
-            padding: 6px 16px;
-            background-color: #e62117;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }}
-        input[type=submit].comment-btn:hover {{
-            background-color: #cc1c13;
-        }}
-      </style>
+        <meta charset="UTF-8">
+        <title>{video['title']}</title>
+        <link rel="stylesheet" href="../static/video_view.css">
+        <link rel="stylesheet" href="../static/header.css">
+        <link rel="stylesheet" href="../static/background.css">
+        <script src="../static/header.js" defer></script>
     </head>
     <body>
+    <!-- ヘッダー部分は既存のまま -->
+    <header class="header">
+        <div class="header-content">
+        <a href="video_top.cgi" class="logo">
+            <div class="logo-icon">VT
+            </div>
+            <div class="logo-text">KouTube
+            </div>
+        </a>
+        <div class="search-container">
+        <form class="search-form" method="get" action="video_search.cgi">
+            <input type="text" name="title" value="{current_title}" class="search-input" placeholder="動画を検索...">
+            <button type="submit" class="search-btn">🔍</button>
+        </form>
+        <button class="voice-search" onclick="startVoiceSearch()">🎤</button>
+        </div>
+        <div class="header-right">
+          <div class="dropdown">
+            <button id="adminMenuBtn" class="dropbtn">管理👤</button>
+            <div id="adminMenu" class="dropdown-content">
+              <a href="upload.cgi">動画アップロード</a>
+              <a href="logout.cgi">ログアウト</a>
+            </div>
+          </div>
+        </div>
+        </div>
+    </header>
 
-    <div class="user-info">
-      <p>ユーザーID: {user_id} でログイン中</p>
-      <a href="video_top.cgi">トップページへ</a> | <a href="upload.cgi">動画をアップロード</a> | <a href="logout.cgi">ログアウト</a>
-    </div>
+    <div class="mt-header">
+        
+        <div class="main-container">
+            <div class="main-content">
+                <div class="video-container">
+                    <video controls>
+                        <source src="{video['file_path']}" type="video/mp4">
+                    </video>
+                </div>
+                
+                <div class="video-info">
+                    <h1>{video['title']}</h1>
+                    <div class="video-description">{video['description']}</div>
+                    
+                    <div class="like-form">
+                        <form method="get" action="video_view.cgi">
+                            <input type="hidden" name="video_id" value="{video_id}">
+                            <input type="hidden" name="like" value="1">
+                            <input type="submit" value="👍 {likes}">
+                        </form>
+                        <form method="get" action="video_view.cgi">
+                            <input type="hidden" name="video_id" value="{video_id}">
+                            <input type="hidden" name="dislike" value="1">
+                            <input type="submit" value="👎 {dislikes}">
+                        </form>
+                    </div>
+                </div>
+                
+                <div class="comment-section">
+                    <h2>コメント</h2>
+    """)
 
-    <h1>{video['title']}</h1>
-    <p>{video['description']}</p>
-    <video controls>
-      <source src="{video['file_path']}" type="video/mp4">
-    </video>
+    for c in comments:
+        print(f"""
+            <div class="comment-box">
+                <div class="comment-username">{c['username']}</div>
+                <div class="comment-content">{c['content']}</div>
+            </div>
+        """)
 
-    <!-- 👍👎 いいね・低評価 -->
-    <div class="like-form">
-      <form method="get" action="video_view.cgi">
-        <input type="hidden" name="video_id" value="{video_id}">
-        <input type="hidden" name="like" value="1">
-        <input type="submit" value="👍 いいね ({likes})">
-      </form>
-      <form method="get" action="video_view.cgi">
-        <input type="hidden" name="video_id" value="{video_id}">
-        <input type="hidden" name="dislike" value="1">
-        <input type="submit" value="👎 低評価 ({dislikes})">
-      </form>
-    </div>
-
-    <!-- 🎯 おすすめ動画 -->
-    <div class="recommend-section">
-      <h2>おすすめの動画</h2>
-      <div class="recommend-list">
+    print(f"""
+                <div class="comment-form">
+                    <h3>コメントを投稿</h3>
+                    <form method="post" action="video_view.cgi">
+                        <input type="hidden" name="video_id" value="{video_id}">
+                        <textarea name="content" placeholder="コメントを追加..."></textarea>
+                        <br>
+                        <input type="submit" class="comment-btn" value="コメント">
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="sidebar">
+            <h2>次の動画</h2>
+            <div class="recommend-list">
     """)
 
     for r in recommendations:
         print(f"""
         <div class="recommend-item">
-          <video muted>
-            <source src="{r['file_path']}" type="video/mp4">
-          </video>
-          <a href="video_view.cgi?video_id={r['id']}">{r['title']}</a>
+            <video muted>
+                <source src="{r['file_path']}" type="video/mp4">
+            </video>
+            <div class="recommend-item-info">
+                <a href="video_view.cgi?video_id={r['id']}">{r['title']}</a>
+                <div class="recommend-item-meta">おすすめ</div>
+            </div>
         </div>
-        """)
-
-    print("</div></div>")
-
-    print(f"""
-    <div class="comment-section">
-      <h2>コメント</h2>
     """)
 
-    for c in comments:
-        print(f"""
-        <div class="comment-box">
-          <div class="comment-username">{c['username']}</div>
-          <div class="comment-content">{c['content']}</div>
+    print("""
+            </div>
         </div>
-        """)
-
-    print(f"""
-      <div class="comment-form">
-        <h3>コメントを投稿</h3>
-        <form method="post" action="video_view.cgi">
-          <input type="hidden" name="video_id" value="{video_id}">
-          <textarea name="content" placeholder="コメントを入力..."></textarea><br>
-          <input type="submit" class="comment-btn" value="コメントを投稿">
-        </form>
-      </div>
     </div>
-
-    </body>
-    </html>
-    """)
+</div>
+</body>
+</html>
+""")
 
     cursor.close()
     conn.close()

@@ -20,3 +20,18 @@ function startVoiceSearch() {
         alert('お使いのブラウザは音声認識に対応していません');
     }
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+  const btn = document.getElementById('adminMenuBtn');
+  const dropdown = btn.parentElement;
+
+  btn.addEventListener('click', function(e) {
+    e.stopPropagation();
+    dropdown.classList.toggle('show');
+  });
+
+  // メニュー外クリックで閉じる
+  document.addEventListener('click', function(e) {
+    dropdown.classList.remove('show');
+  });
+});

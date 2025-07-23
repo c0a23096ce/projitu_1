@@ -1,10 +1,4 @@
-/* ベーススタイル */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
+/* ログイン・登録フォームカード */
 body {
     font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #f5576c 75%, #4facfe 100%);
@@ -12,19 +6,12 @@ body {
     animation: gradientFlow 20s ease infinite;
     color: #fff;
     min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
+    overflow-x: hidden;
+    display: flex;                /* 追加：flexboxで中央寄せ */
+    justify-content: center;      /* 横方向中央 */
+    align-items: center;          /* 縦方向中央 */
 }
 
-@keyframes gradientFlow {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-}
-
-/* ログイン・登録フォームカード */
 .auth-container {
     background: rgba(255, 255, 255, 0.1);
     border-radius: 24px;

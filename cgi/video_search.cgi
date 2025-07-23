@@ -20,19 +20,44 @@ try:
     print("Content-Type: text/html; charset=utf-8")
     print()
     print("""
-    <html>
-    <head>
-        <title>動画検索</title>
-    </head>
-    <body>
-        <h1>動画検索</h1>
-        <form method="get" action="video_search.cgi">
-            <input type="text" name="title" value="{title}" placeholder="動画タイトルを入力">
-            <input type="submit" value="検索">
-        </form>
-        <h2>検索結果</h2>
-        <ul>
-    """.format(title=title))
+        <html>
+        <head>
+            <title>動画検索</title>
+            <link rel="stylesheet" href="../static/video_search.css">
+            <link rel="stylesheet" href="../static/header.css">
+            <link rel="stylesheet" href="../static/background.css">
+            <script src="../static/header.js" defer></script>
+        </head>
+        <body>
+            <header class="header">
+                <div class="header-content">
+                    <a href="video_top.cgi" class="logo">
+                        <div class="logo-icon">VT</div>
+                        <div class="logo-text">KouTube</div>
+                    </a>
+                    <div class="search-container">
+                        <form class="search-form" method="get" action="video_search.cgi">
+                            <input type="text" name="title" value="{title}" class="search-input" placeholder="動画を検索...">
+                            <button type="submit" class="search-btn">🔍</button>
+                        </form>
+                        <button class="voice-search" onclick="startVoiceSearch()">🎤</button>
+                    </div>
+                    <div class="header-right">
+                        <div class="dropdown">
+                            <button id="adminMenuBtn" class="dropbtn">管理👤</button>
+                            <div id="adminMenu" class="dropdown-content">
+                                <a href="upload.cgi">動画アップロード</a>
+                                <a href="logout.cgi">ログアウト</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            <div class="mt-header">
+                <div class="result-area">
+                    <h2>検索結果</h2>
+                    <ul class="result-list">
+        """.format(title=title))
     # print(f"use_query: {query}<br>")
     if results:
         for row in results:
@@ -48,13 +73,13 @@ try:
             </li>
             """)
     else:
-        print("<li>該当する動画はありません。</li>")
+        print('<li class="no-result">該当する動画はありません。</li>')
     print("""
         </ul>
-        <a href="video_top.cgi">動画一覧に戻る</a>
-    </body>
-    </html>
-    """)
+    </div>
+</body>
+</html>
+""")
 
 except mysql.connector.Error as e:
     print("Content-Type: text/html; charset=utf-8")
@@ -66,4 +91,4 @@ finally:
     conn.close()
 
 # テストインジェクション
-# ' UNION SELECT id, '', password, '', email, 0, NOW() FROM users -- ' 
+# ' UNION SELECT id, '', password, '', email, 0, NOW() FROM users -- '

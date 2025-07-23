@@ -28,25 +28,28 @@ message = ""
 html_template = '''
 <!DOCTYPE html>
 <html lang="ja">
-<head>
-    <meta charset="utf-8">
-    <title>ログインページ</title>
-    <link rel="stylesheet" href="../static/register.css">
-</head>
-<body>
-    <div class="auth-container">
-        <h2 class="auth-title">ログイン</h2>
-        <p class="error-message">{message}</p>
-        <form action="./login.cgi" method="post">
-            <input type="email" name="email" placeholder="メールアドレス" class="auth-input" required><br>
-            <input type="password" name="password" placeholder="パスワード" class="auth-input" required><br>
-            <button type="submit" class="auth-btn">ログイン</button>
-        </form>
-        <div class="auth-toggle">
-            アカウントをお持ちでない方は <a href="./register.cgi">新規登録</a>
+    <head>
+        <meta charset="utf-8">
+        <title>ログインページ</title>
+        <link rel="stylesheet" href="../static/register.css">
+        <link rel="stylesheet" href="../static/background.css">
+    </head>
+    <body>
+        <div class="auth-container">
+            <h2 class="auth-title">ログイン</h2>
+            <p class="error-message">{message}</p>
+            <form action="./login.cgi" method="post">
+                <input type="email" name="email" placeholder="メールアドレス" class="auth-input" required>
+                <br>
+                <input type="password" name="password" placeholder="パスワード" class="auth-input" required>
+                <br>
+                <button type="submit" class="auth-btn">ログイン</button>
+            </form>
+            <div class="auth-toggle">アカウントをお持ちでない方は 
+                <a href="./register.cgi">新規登録</a>
+            </div>
         </div>
-    </div>
-</body>
+    </body>
 </html>
 '''
 

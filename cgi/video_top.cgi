@@ -45,53 +45,65 @@ try:
     videos = cursor.fetchall()
 
     print(f"""
-    <!DOCTYPE html>
-    <html lang="ja">
-    <head>
-      <meta charset="UTF-8">
-      <title>KouTube - トップページ</title>
-      <link rel="stylesheet" href="../static/video_top.css">
-    </head>
-    <body>
+        <!DOCTYPE html>
+        <html lang="ja">
+        <head>
+            <meta charset="UTF-8">
+            <title>KouTube - トップページ</title>
+            <link rel="stylesheet" href="../static/video_top.css">
+            <link rel="stylesheet" href="../static/header.css">
+            <link rel="stylesheet" href="../static/background.css">
+            <script src="../static/header.js" defer></script>
+        </head>
+        <body>
 
-    <header class="header">
-      <div class="header-content">
-        <a href="#" class="logo">
-          <div class="logo-icon">VT</div>
-          <div class="logo-text">KouTube</div>
-        </a>
-        <div class="search-container">
-          <form class="search-form" method="get" action="video_search.cgi">
-            <input type="text" name="title" value="{current_title}" class="search-input" placeholder="動画、チャンネル、クリエイターを検索...">
-            <button type="submit" class="search-btn">🔍</button>
-          </form>
-          <button class="voice-search" onclick="startVoiceSearch()">🎤</button>
-        </div>
-        <div class="header-right">
-          <a href="upload.cgi">管理👤</a>
-        </div>
-      </div>
-    </header>      
+        <header class="header">
+            <div class="header-content">
+                <a href="video_top.cgi" class="logo">
+                    <div class="logo-icon">VT
+                    </div>
+                    <div class="logo-text">KouTube
+                    </div>
+                </a>
+                <div class="search-container">
+                    <form class="search-form" method="get" action="video_search.cgi">
+                        <input type="text" name="title" value="{current_title}" class="search-input" placeholder="動画を検索...">
+                        <button type="submit" class="search-btn">🔍</button>
+                    </form>
+                    <button class="voice-search" onclick="startVoiceSearch()">🎤</button>
+                </div>
+                <div class="header-right">
+                    <div class="dropdown">
+                        <button id="adminMenuBtn" class="dropbtn">管理👤</button>
+                        <div id="adminMenu" class="dropdown-content">
+                            <a href="upload.cgi">動画アップロード</a>
+                            <a href="logout.cgi">ログアウト</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>   
 
-    <div class="video-grid">
+        <div class="mt-header">
+            <div class="video-grid">
     """)
 
 # 各動画カードを出力
     for v in videos:
         print(f"""
-      <div class="video-card">
-        <a href="video_view.cgi?video_id={v['id']}&user_id=1">
-          <video muted>
-            <source src="{v['file_path']}" type="video/mp4">
-          </video>
-          <div class="video-title">{v['title']}</div>
-        </a>
-      </div>
-    """)
+                <div class="video-card">
+                    <a href="video_view.cgi?video_id={v['id']}&user_id=1">
+                        <video muted>
+                            <source src="{v['file_path']}" type="video/mp4">
+                        </video>
+                        <div class="video-title">{v['title']}</div>
+                    </a>
+                </div>
+        """)
 
     print("""
+        </div>
     </div>
-    <script src="../static/voice_search.js"></script>
     </body>
     </html>
     """)
