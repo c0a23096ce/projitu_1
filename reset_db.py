@@ -76,28 +76,53 @@ tables = [
 for table_query in tables:
     cursor.execute(table_query)
 
-salt = crypt.mksalt(crypt.METHOD_SHA512)
-hashed_password = crypt.crypt("password1", salt)
+insert_user = [
+    {"username": "Taku18",
+     "password": "passwordA1!",
+     "email": "taku18@example.com",
+     "fname" : "工科",
+     "lname" : "太郎"
+    },
+    {"username": "sera",
+     "password": "passwordA1!",
+     "email": "sera@example.com",
+     "fname" : "工科",
+     "lname" : "太郎"
+    },
+    {"username": "kaede_2025j",
+     "password": "passwordA1!",
+     "email": "kaede_2025j@example.com",
+     "fname" : "工科",
+     "lname" : "太郎"
+    },
+    {"username": "eisho",
+     "password": "passwordA1!",
+     "email": "eisho@example.com",
+     "fname" : "工科",
+     "lname" : "太郎"
+    }
+]
 
-
-insert_user = f"""
-INSERT INTO users (username, password, email, fname, lname) VALUES
-('user1', '{hashed_password}', 'user1@example.com', 'User', 'One')
-"""
-
-cursor.execute(insert_user)
+for user in insert_user:
+    salt = crypt.mksalt(crypt.METHOD_SHA512)
+    hashed_password = crypt.crypt(user["password"], salt)
+    query = f"""
+    INSERT INTO users (username, password, email, fname, lname) VALUES
+    (%s, %s, %s, %s, %s)
+    """
+    cursor.execute(query, (user["username"], hashed_password, user["email"], user["fname"], user["lname"]))
 
 insert_video = """
 INSERT INTO videos (user_id, title, description, file_path, view_count, upload_at) VALUES
-(1, 'テスト動画', 'これはテスト用の説明です', '/project/projitu_1/project/projitu_1/videos/test.mp4', 0, '2025-07-11 17:00:00'),
-(1, '飛行機の映像', '飛行機が飛んでるよ', '/project/projitu_1/videos/hikouki.mp4', 0, '2025-07-11 17:42:36'),
-(1, '海', '自然の風景', '/project/projitu_1/videos/umi.mp4', 0, '2025-07-11 17:43:32'),
-(1, '教会の荘厳な佇まい', '静けさと歴史を感じる古い教会の映像です。', '/project/projitu_1/videos/church.mp4', 0, '2025-07-18 14:10:36'),
-(1, '滝の迫力映像', '豪快に流れる滝と自然の音を収録。', '/project/projitu_1/videos/taki.mp4', 0, '2025-07-18 14:10:36'),
-(1, '自然の中のひととき', '森の中での癒やしのひとときをお届けします。', '/project/projitu_1/videos/nature.mp4', 0, '2025-07-18 14:10:36');
+(1, 'test1', 'ギター練習', '/project/projitu_1/videos/71823308bf2b400f97bcd9e81f4ac369.mp4', 0, '2025-07-24 21:55:52'),
+(2, 'test2', 'ヤモリの裏', '/project/projitu_1/videos/364eeffca79847178f19b71cd666bef4.mp4', 0, '2025-07-24 21:58:15'),
+(3, 'test3', 'ポケモンGOボックス画面', '/project/projitu_1/videos/2e4acb080b8f43a3b0d784329d28b89a.mp4', 0, '2025-07-24 21:59:44'),
+(4, 'test4', 'RideLink紹介動画', '/project/projitu_1/videos/b2edfa739620481cbe68fb756e4c13a7.mp4', 0, '2025-07-24 22:01:26');
 """
 
 cursor.execute(insert_video)
+
+
 
 conn.commit()
 cursor.close()

@@ -18,6 +18,7 @@ html_template = '''
         <link rel="stylesheet" href="../static/header.css">
         <link rel="stylesheet" href="../static/upload.css">
         <script src="../static/header.js" defer></script>
+        <script src="../static/upload.js" defer></script>
     </head>
     <body>
         <header class="header">

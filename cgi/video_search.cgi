@@ -67,7 +67,7 @@ try:
             print(f"""
             <li>
                 <a href="video_view.cgi?video_id={video_id}&user_id={user_id}">
-                <video controls src="/project/projitu_1/videos/{file_path}" width="240"></video><br>
+                <video controls src="{file_path}" width="240"></video><br>
                 タイトル: {video_title}<br>
                 </a>
             </li>
