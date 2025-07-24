@@ -55,30 +55,36 @@ cursor = db.cursor()
     
 
 if username and password and email and fname and lname:
-    salt = crypt.mksalt(crypt.METHOD_SHA512)
-    hashed_password = crypt.crypt(password, salt)
-    try:
-        # SQLインジェクション脆弱性あり（意図的）
-        query = f"""
-        INSERT INTO users (username, password, email, fname, lname)
-        VALUES ('{username}', '{hashed_password}', '{email}', '{fname}', '{lname}')
-        """
-        cursor.execute(query)
-        db.commit()
-        
-        print("""
-              Content-Type: text/html; charset=utf-8\n
-              
-              <script>
-                alert('register success');
-                window.location.href = './login.cgi';
-              </script>
-              """)
+    # 既存ユーザー確認
+    query = f"SELECT COUNT(*) FROM users WHERE email = '{email}'"
+    cursor.execute(query)
+    count = cursor.fetchone()[0]
+    if count > 0:
+        message = "このユーザー名またはメールアドレスは既に登録されています。"
+        print(html_template.format(message=message))
+    else:
+        salt = crypt.mksalt(crypt.METHOD_SHA512)
+        hashed_password = crypt.crypt(password, salt)
+        try:
+            # SQLインジェクション脆弱性あり（意図的）
+            query = f"""
+            INSERT INTO users (username, password, email, fname, lname)
+            VALUES ('{username}', '{hashed_password}', '{email}', '{fname}', '{lname}')
+            """
+            cursor.execute(query)
+            db.commit()
+            
+            print("""
+                  Content-Type: text/html; charset=utf-8\n
+                  
+                  <script>
+                    alert('register success');
+                    window.location.href = './login.cgi';
+                  </script>
+                  """)
 
-    except Exception as e:
-        message = f"エラーが発生しました: {str(e)}"
-
-    print(html_template.format(message=message))
-
+        except Exception as e:
+            message = f"エラーが発生しました: {str(e)}"
+            print(html_template.format(message=message))
 else:
     print(html_template.format(message=""))
