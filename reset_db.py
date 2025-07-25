@@ -77,29 +77,40 @@ for table_query in tables:
     cursor.execute(table_query)
 
 insert_user = [
-    {"username": "Taku18",
-     "password": "passwordA1!",
-     "email": "taku18@example.com",
-     "fname" : "工科",
-     "lname" : "太郎"
+    {
+        "username": "Taku18",
+        "password": "passwordA1!",
+        "email": "taku18@example.com",
+        "fname": "工科",
+        "lname": "太郎"
     },
-    {"username": "sera",
-     "password": "passwordA1!",
-     "email": "sera@example.com",
-     "fname" : "工科",
-     "lname" : "太郎"
+    {
+        "username": "sera",
+        "password": "passwordA1!",
+        "email": "sera@example.com",
+        "fname": "工科",
+        "lname": "太郎"
     },
-    {"username": "kaede_2025j",
-     "password": "passwordA1!",
-     "email": "kaede_2025j@example.com",
-     "fname" : "工科",
-     "lname" : "太郎"
+    {
+        "username": "kaede_2025j",
+        "password": "passwordA1!",
+        "email": "kaede_2025j@example.com",
+        "fname": "工科",
+        "lname": "太郎"
     },
-    {"username": "eisho",
-     "password": "passwordA1!",
-     "email": "eisho@example.com",
-     "fname" : "工科",
-     "lname" : "太郎"
+    {
+        "username": "eisho",
+        "password": "passwordA1!",
+        "email": "eisho@example.com",
+        "fname": "工科",
+        "lname": "太郎"
+    },
+    {
+        "username": "りょっちん",
+        "password": "passwordA1!",
+        "email": "ryocchin@example.com",
+        "fname": "工科",
+        "lname": "太郎"
     }
 ]
 
@@ -117,7 +128,8 @@ INSERT INTO videos (user_id, title, description, file_path, view_count, upload_a
 (1, 'ギター練習記#1', 'ギター練習', '/project/projitu_1/videos/71823308bf2b400f97bcd9e81f4ac369.mp4', 0, '2025-07-24 21:55:52'),
 (2, 'ヤモリの食事', 'ヤモリの裏', '/project/projitu_1/videos/364eeffca79847178f19b71cd666bef4.mp4', 0, '2025-07-24 21:58:15'),
 (3, 'ポケモンGO色違いシリーズ', 'ポケモンGOボックス画面', '/project/projitu_1/videos/2e4acb080b8f43a3b0d784329d28b89a.mp4', 0, '2025-07-24 21:59:44'),
-(4, 'RideLink紹介動画', 'RideLink紹介動画', '/project/projitu_1/videos/b2edfa739620481cbe68fb756e4c13a7.mp4', 0, '2025-07-24 22:01:26');
+(4, 'RideLink紹介動画', 'RideLink紹介動画', '/project/projitu_1/videos/b2edfa739620481cbe68fb756e4c13a7.mp4', 0, '2025-07-24 22:01:26'),
+(5, 'イモリの日常', 'イモリの生態', '/project/projitu_1/videos/c0b1575a272449f2977ce6a92016e101.mp4', 0, '2025-07-25 10:50:56');
 """
 
 cursor.execute(insert_video)
